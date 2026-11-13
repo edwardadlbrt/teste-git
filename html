@@ -1,0 +1,177 @@
+ml lang="pt-BR">
+/EDUARDO ADALBERTO/
+
+<head><!DOCTYPE html>
+<ht
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIAAG - Relatórios e Consultas | Fazenda Escola IFPI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/relatorios.css') }}">
+    <!-- Ícones simples via FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+</head>
+
+<body>
+    <div class="layout-container">
+        <!-- Barra Lateral de Navegação -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-tractor logo-icon"></i>
+                <h2>SIAAG</h2>
+                <span class="sub-label">Fazenda Escola - IFPI</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Estoque</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-cow"></i> Animais</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-seedling"></i> Atividades</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-notes-medical"></i> Controle Veterinário</a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-toolbox"></i> Patrimônio</a>
+                <a href="#" class="nav-item active"><i class="fa-solid fa-file-lines"></i> Relatórios</a>
+            </nav>
+            <div class="sidebar-footer">
+                <small>Dev 4 • Módulo de Consultas</small>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <header class="topbar">
+                <div>
+                    <h1>Relatórios e Consultas</h1>
+                    <p>Consulte, filtre e analise os dados operacionais da Fazenda Escola do IFPI — Campus Paulistana.
+                    </p>
+                </div>
+                <div class="user-badge">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Gestor / Pesquisador</span>
+                </div>
+            </header>
+
+            <!-- Área de Indicadores (KPIs) -->
+            <section class="kpi-container">
+                <div class="kpi-card">
+                    <div class="kpi-icon green"><i class="fa-solid fa-database"></i></div>
+                    <div>
+                        <span class="kpi-title">Total de Registros</span>
+                        <h3 id="kpi-total">0</h3>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon light-green"><i class="fa-solid fa-calendar-days"></i></div>
+                    <div>
+                        <span class="kpi-title">No Período Filtrado</span>
+                        <h3 id="kpi-periodo">0</h3>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon dark-green"><i class="fa-solid fa-layer-group"></i></div>
+                    <div>
+                        <span class="kpi-title">Categorias Únicas</span>
+                        <h3 id="kpi-categorias">0</h3>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon accent-green"><i class="fa-solid fa-circle-check"></i></div>
+                    <div>
+                        <span class="kpi-title">Ativos / Regulares</span>
+                        <h3 id="kpi-ativos">0</h3>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Área de Filtros -->
+            <section class="filter-section">
+                <form id="filter-form" class="filter-grid">
+                    <div class="filter-group">
+                        <label for="filtro-modulo">Módulo / Tipo</label>
+                        <select id="filtro-modulo">
+                            <option value="todos">Todos os módulos</option>
+                            <option value="Estoque">Estoque</option>
+                            <option value="Animais">Animais</option>
+                            <option value="Atividades">Atividades Agropecuárias</option>
+                            <option value="Veterinario">Controle Veterinário</option>
+                            <option value="Patrimonio">Patrimônio</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filtro-data-ini">Data Inicial</label>
+                        <input type="date" id="filtro-data-ini">
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filtro-data-fim">Data Final</label>
+                        <input type="date" id="filtro-data-fim">
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filtro-situacao">Situação</label>
+                        <select id="filtro-situacao">
+                            <option value="">Todas as situações</option>
+                            <option value="Ativo">Ativo / Em uso</option>
+                            <option value="Em Manutenção">Em Manutenção</option>
+                            <option value="Baixado">Baixado</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filtro-responsavel">Responsável</label>
+                        <input type="text" id="filtro-responsavel" placeholder="Ex: Prof. Carlos">
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa-solid fa-filter"></i> Aplicar Filtros
+                        </button>
+                        <button type="button" id="btn-limpar" class="btn btn-secondary">
+                            <i class="fa-solid fa-rotate-left"></i> Limpar
+                        </button>
+                        <button type="button" id="btn-exportar" class="btn btn-export">
+                            <i class="fa-solid fa-file-csv"></i> Exportar CSV
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Área de Resultados (Tabela) -->
+            <section class="results-section">
+                <div class="results-header">
+                    <h2>Registros Encontrados</h2>
+                    <span id="contador-tabela" class="badge-count">Exibindo 0 registros</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th onclick="ordenarTabela('id')">ID <i class="fa-solid fa-sort"></i></th>
+                                <th onclick="ordenarTabela('modulo')">Módulo <i class="fa-solid fa-sort"></i></th>
+                                <th onclick="ordenarTabela('descricao')">Descrição / Item <i
+                                        class="fa-solid fa-sort"></i></th>
+                                <th onclick="ordenarTabela('categoria')">Categoria <i class="fa-solid fa-sort"></i></th>
+                                <th onclick="ordenarTabela('data')">Data <i class="fa-solid fa-sort"></i></th>
+                                <th onclick="ordenarTabela('responsavel')">Responsável <i class="fa-solid fa-sort"></i>
+                                </th>
+                                <th>Situação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-corpo">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mensagem de lista vazia -->
+                <div id="sem-resultados" class="empty-state" style="display: none;">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <p>Nenhum registro encontrado com os filtros selecionados.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/relatorios.js') }}"></script>
+</body>
+
+</html>
